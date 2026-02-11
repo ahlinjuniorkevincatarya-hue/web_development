@@ -1,0 +1,39 @@
+ip={
+    "192.168.0.1" : "classe C",
+    "10.0.0.1" : "classe A",
+    "172.16.0.1" : "classe B",
+    "200.100.50.1" : "adresse IP publique",
+    "169.254.0.1" : "adresse IP de lien local"
+}
+#1
+print("la premiere adresse de la liste est ",list(ip.keys())[0])
+#2
+print("la derniere adresse de la liste est ",list(ip.keys())[-1])
+#3
+print("la troisieme adresse de la liste est ",list(ip.keys())[2])
+#4
+ip["172.31.0.1"]="classe B"
+#5
+ip.pop("200.100.50.1")
+#6
+print("le nombre d'adresse restant est ",len(list(ip.keys())))
+#7
+a="192.168.0.1" in list(ip.keys())
+if a==True:
+    print("L'adresse 192.168.0.1 est bien presente dans la liste")
+else:
+    print("cette adresse est absente de la liste")
+#8
+print("la classe de l'adresse ip est la :",ip["10.0.0.1"])
+#9
+print(sorted((ip.keys())))
+#10
+c=[ip for ip, classe in ip.items() if "classe C" in classe]
+if len(c) == len(list(ip.keys())):
+    print("Toutes les adresses IP de la liste appartiennent a la classe C")
+else :
+    print("Aucune adresse IP de la liste appartient a la classe C")
+#11
+publiq=[ip for ip,classe in ip.items() if "adresse IP publique" in classe]
+print("les adresses publiques sont au nombre de ",len(publiq))
+print(ip.items())

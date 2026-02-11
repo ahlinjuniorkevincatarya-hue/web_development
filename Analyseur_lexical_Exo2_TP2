@@ -1,0 +1,96 @@
+import string
+
+#Analyse lexicale
+def nombre2mot(text):
+    return len(text.split())
+
+def occMots(text):
+    dictio={}
+    for mot in text.split(" "):
+        mot=mot.strip(string.punctuation).lower()
+        dictio[mot]=dictio.get(mot,0)+1
+    return dictio
+
+def longueurmoyen(text):
+    mot=text.split(' ')
+    longueur=[len(m) for m in mot]
+    moy = sum(longueur)/len(longueur)
+    occ=occMots(text)
+    occMax=max(occ.values())
+    l=[k for k,v in occ.items()if v == occMax]
+    return l,occMax,moy
+
+def palindromes(text):
+    return [mot for mot in text.split(" ") if mot==mot[::-1] and len(mot)>1]
+
+#Analyse grammaticale
+def phrases(text):
+    # Séparer les phrases par ., !, ?
+    sentence = []
+    phrase = ""
+    for c in text:
+        phrase += c
+        if c in ".!?":
+            sentence.append(phrase.strip())
+            phrase = ""
+    if phrase.strip():  # dernier morceau s'il n'y a pas de ponctuation finale
+        sentence.append(phrase.strip())
+    return sentence
+
+def longueur_phrase(text):
+    sentence = phrases(text)
+    return [len(p.split()) for p in sentence]
+
+def ponctuation_utilisee(text):
+    return set(c for c in text if c in string.punctuation)
+
+
+# Rapports et statistiques
+
+def top_mots(freq_dict, n=10):
+    # Trier par valeur descendante
+    return sorted(freq_dict.items(), key=lambda x: x[1], reverse=True)[:n]
+
+def phrases_plus_longues(text, n=5):
+    sentence = phrases(text)
+    sentence_sorted = sorted(sentence, key=lambda x: len(x.split()), reverse=True)
+    return sentence_sorted[:n]
+
+def diversite_vocabulaire(freq_dict):
+    return len(freq_dict) / sum(freq_dict.values()) if sum(freq_dict.values()) > 0 else 0
+
+def patterns_repetitifs(text, n=2):
+    """Trouve les séquences de n mots les plus répétées"""
+    mots = [mot.strip(string.punctuation).lower() for mot in text.split() if mot.strip(string.punctuation)]
+    patterns = {}
+    for i in range(len(mots) - n + 1):
+        pattern = " ".join(mots[i:i+n])
+        patterns[pattern] = patterns.get(pattern, 0) + 1
+
+    repetitifs = {k: v for k, v in patterns.items() if v > 1}
+    return repetitifs
+
+with open('data.txt','rt') as file:
+    data=file.read()
+    freq = occMots(data)
+    nbmots = nombre2mot(data)
+    print("le nombre de mots est :",nbmots)
+    print("la frequence des mots est:",occMots(data))
+    maxMots,maxOcc,moy=longueurmoyen(data)
+    print(f"les mots les plus utilises sont {maxMots} utilise {maxOcc} fois")
+
+    phs = phrases(data)
+    longs_ph = longueur_phrase(data)
+    puncts = ponctuation_utilisee(data)
+    print("Nombre de phrases :", len(phs))
+    print("Longueur des phrases (en mots) :", longs_ph)
+    print("Ponctuation utilisée :", puncts)
+
+    print("Top 10 des mots :", top_mots(freq, 10))
+    print("Phrases les plus longues :", phrases_plus_longues(data))
+    print("Diversité du vocabulaire :", diversite_vocabulaire(freq))
+    patterns = patterns_repetitifs(data, n=2)
+    if patterns:
+        print("Patterns repetes (bigrammes) :", patterns)
+    else:
+        print("Aucun pattern repete trouve.")
